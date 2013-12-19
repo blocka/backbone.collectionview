@@ -4,7 +4,7 @@
 		define(['backbone','underscore'], factory);
 	} else {
 		// Browser globals
-		root.amdWeb = factory(root.Backbone,root._);
+		root.CollectionView = factory(root.Backbone,root._);
 	}
 }(this, function (Backbone,_) {
 	var CollectionView = Backbone.View.extend({
