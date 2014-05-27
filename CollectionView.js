@@ -17,7 +17,6 @@
 
 			this.listenTo(this.collection,'add sort', this.render);
 
-			this.listenTo(this.collection,'add sort', this.render);
 			this.listenTo(this.collection,'reset', function() {
 				_.each(this.children,function(view,cid) {
 					if (!this.collection.get(cid)) {
