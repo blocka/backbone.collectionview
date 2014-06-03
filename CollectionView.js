@@ -9,6 +9,8 @@
 }(this, function (Backbone,_) {
 	var CollectionView = Backbone.View.extend({
 		initialize: function(options) {
+			this.renderRound = 0;
+
 			this.options = options;
 			this.$tmpl = this.$el.clone();
 			this.$el.hide();
@@ -37,22 +39,49 @@
 			this.render();
 		},
 		render: function() {
+			this.renderRound++;
+
 			_(this.children).each(function(child) {
 				child.$el.detach();
 			});
 
-			var frag = document.createDocumentFragment();
+			var models = this.collection.models.slice();
 
-			this.collection.each(function(model) {
-				if (!this.children[model.cid]) {
-					var child = this.$tmpl.clone()[0];
-					this.children[model.cid] = new this.options.view({model:model,el:child}).render();
-				}
+			var nextBundle = function(view,renderRound) {
+				if (models.length === 0) return;
+				if (renderRound != view.renderRound) return;
 
-				frag.appendChild(this.children[model.cid].el);
-			},this);
+				setTimeout(function() {
+					if (renderRound != view.renderRound) return;
 
-			this.$el.after(frag);
+					var startTime = +new Date();
+					var frag = document.createDocumentFragment();
+
+					while(+new Date()-startTime <= 50) {
+						var model = models.shift();
+
+						if (!model) break;
+
+						if (!view.children[model.cid]) {
+							var child = view.$tmpl.clone()[0];
+							view.children[model.cid] = new view.options.view({model:model,el:child}).render();
+						}
+
+						frag.appendChild(view.children[model.cid].el);
+					}
+
+					if (view.$el.siblings().last().length > 0) {
+						view.$el.siblings().last().after(frag);
+					}
+					else {
+						view.$el.after(frag);
+					}
+
+					nextBundle(view,renderRound);
+				},25);
+			};
+
+			nextBundle(this,this.renderRound);
 
 			return this;
 		},
