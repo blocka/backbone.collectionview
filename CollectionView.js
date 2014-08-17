@@ -23,6 +23,7 @@
 				_.each(this.children,function(view,cid) {
 					if (!this.collection.get(cid)) {
 						view.remove();
+						delete this.children[cid];
 					}
 				},this);
 
