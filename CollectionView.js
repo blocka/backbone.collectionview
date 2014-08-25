@@ -71,8 +71,12 @@
 						frag.appendChild(view.children[model.cid].el);
 					}
 
-					if (view.$el.siblings().last().length > 0) {
-						view.$el.siblings().last().after(frag);
+					var siblings = view.$el.siblings().filter(function(i,el) {
+						return _.chain(view.children).values().pluck('el').include(el).value();
+					});
+
+					if (siblings.length > 0) {
+						_(siblings).last().after(frag);
 					}
 					else {
 						view.$el.after(frag);
