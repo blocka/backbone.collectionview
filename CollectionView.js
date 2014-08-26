@@ -76,7 +76,7 @@
 					});
 
 					if (siblings.length > 0) {
-						_(siblings).last().after(frag);
+						$(_(siblings).last()).after(frag);
 					}
 					else {
 						view.$el.after(frag);
