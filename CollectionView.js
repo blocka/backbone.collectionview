@@ -1,12 +1,12 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['backbone','underscore'], factory);
+		define(['backbone','underscore','jquery'], factory);
 	} else {
 		// Browser globals
-		root.CollectionView = factory(root.Backbone,root._);
+		root.CollectionView = factory(root.Backbone,root._,root.jQuery);
 	}
-}(this, function (Backbone,_) {
+}(this, function (Backbone,_i,$) {
 	var CollectionView = Backbone.View.extend({
 		initialize: function(options) {
 			this.renderRound = 0;
