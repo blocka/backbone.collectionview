@@ -52,36 +52,34 @@
 				if (models.length === 0) return;
 				if (renderRound != view.renderRound) return;
 
+				var startTime = +new Date();
+				var frag = document.createDocumentFragment();
+
+				while(+new Date()-startTime <= 50) {
+					var model = models.shift();
+
+					if (!model) break;
+
+					if (!view.children[model.cid]) {
+						var child = view.$tmpl.clone()[0];
+						view.children[model.cid] = new view.options.view({model:model,el:child}).render();
+					}
+
+					frag.appendChild(view.children[model.cid].el);
+				}
+
+				var siblings = view.$el.siblings().filter(function(i,el) {
+					return _.chain(view.children).values().pluck('el').include(el).value();
+				});
+
+				if (siblings.length > 0) {
+					$(_(siblings).last()).after(frag);
+				}
+				else {
+					view.$el.after(frag);
+				}
+
 				setTimeout(function() {
-					if (renderRound != view.renderRound) return;
-
-					var startTime = +new Date();
-					var frag = document.createDocumentFragment();
-
-					while(+new Date()-startTime <= 50) {
-						var model = models.shift();
-
-						if (!model) break;
-
-						if (!view.children[model.cid]) {
-							var child = view.$tmpl.clone()[0];
-							view.children[model.cid] = new view.options.view({model:model,el:child}).render();
-						}
-
-						frag.appendChild(view.children[model.cid].el);
-					}
-
-					var siblings = view.$el.siblings().filter(function(i,el) {
-						return _.chain(view.children).values().pluck('el').include(el).value();
-					});
-
-					if (siblings.length > 0) {
-						$(_(siblings).last()).after(frag);
-					}
-					else {
-						view.$el.after(frag);
-					}
-
 					nextBundle(view,renderRound);
 				},25);
 			};
